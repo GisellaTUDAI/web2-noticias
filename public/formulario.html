@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publicar Noticia - Sistema de Noticias</title>
+    <link rel="stylesheet" href="/public/estilos.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h1>Publicar Nueva Noticia</h1>
+                <p>Comparte información importante con todos los usuarios</p>
+            </div>
+            <div class="card-body">
+                <form action="/public/formulario.html" method="POST">
+                    <div class="form-group">
+                        <label for="titulo">Título de la noticia</label>
+                        <input type="text" id="titulo" name="titulo" class="form-control"
+                            placeholder="Ej: Lanzamiento de nueva versión" required autofocus>
+                        <small style="color: #666; display: block; margin-top: 5px;">Máximo 100 caracteres</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="texto">Contenido de la noticia</label>
+                        <textarea id="texto" name="texto" class="form-control"
+                            placeholder="Escribe aquí el contenido de tu noticia..." required></textarea>
+                        <small style="color: #666; display: block; margin-top: 5px;">Comparte todos los detalles
+                            importantes</small>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <button type="submit" class="btn btn-primary">Publicar Noticia</button>
+                        <a href="/" class="btn btn-secondary">← Volver al Inicio</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="footer">
+            <p>Sistema de Noticias - Programación Web II</p>
+        </div>
+    </div>
+</body>
+
+</html>

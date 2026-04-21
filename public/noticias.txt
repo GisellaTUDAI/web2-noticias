@@ -1,0 +1,4 @@
+Noticia de ejemplo: Bienvenidos al sistema de noticias|Este es el contenido de la noticia de ejemplo: este es un sistema desarrollado con Node.js. Podes publicar tus propias noticias usando el formulario.
+
+
+

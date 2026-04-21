@@ -1,0 +1,11 @@
+{
+  "name": "web2-noticias",
+  "version": "1.0.0",
+  "main": "servidor.js",
+  "scripts": {
+    "start": "node servidor.js"
+  },
+  "dependencies": {
+    "mime": "^3.0.0"
+  }
+}
