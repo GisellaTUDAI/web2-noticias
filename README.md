@@ -18,10 +18,10 @@ Punto 2 - Arquitectura y selección de librerías
 Se utilizaron tres módulos nativos de Node.js
 
 *1.Módulo `http`
-Este mósulo permite crear un servidor web que escucha peticiones HTTP. En la aplicación se utiliza la función `createServer()` para crear el servidor y `listen()` para ponerlo a la escucha en el puerto 3000. También se usan los métodos `writeHead()` para enviar los códigos de estado HTTP y `end()` para finalizar la respuesta. Se eligió este módulo porque es la base de Node.js para construir servidores. Permite controlar manualmente el flujo de peticiones y respuestas sin depender de framworks externos.
+Este módulo permite crear un servidor web que escucha peticiones HTTP. En la aplicación se utiliza la función `createServer()` para crear el servidor y `listen()` para ponerlo a la escucha en el puerto 3000. También se usan los métodos `writeHead()` para enviar los códigos de estado HTTP y `end()` para finalizar la respuesta. Se eligió este módulo porque es la base de Node.js para construir servidores. Permite controlar manualmente el flujo de peticiones y respuestas sin depender de framworks externos.
 
 *2. Módulo `fs/promises`
-Este mósulo permite acceder al sistema de archivos. En la aplicación se utiliza `readFile()` para leer el archivo `noticias.txt` y `appendFile()` para agregar nuevas noticias. Se eligió la versión con promesas (`fs/promises`) porque permite un código más limpio y legible que usar callbacks, evitando el "callback hell".
+Este módulo permite acceder al sistema de archivos. En la aplicación se utiliza `readFile()` para leer el archivo `noticias.txt` y `appendFile()` para agregar nuevas noticias. Se eligió la versión con promesas (`fs/promises`) porque permite un código más limpio y legible que usar callbacks, evitando el "callback hell".
 
 *3. Módulo `url`
 Este módulo facilita el análisis de las URLs de las peticiones. Se utiliza la clase `URL` para parsear la URL completa, extrayendo el `pathname` (ruta solicitada) y los parámetros GET mediante el método `searchParams.get()`. Se eligió porque es la forma estándar y segura de trabajar con URLs en Node.js.
@@ -47,7 +47,7 @@ El servidor se crea utilizando el método `http.createServer()`, que recibe una 
 Dentro de esta función, lo primero que se hace es crear un objeto de la clase `URL` para parsear la dirección completa. Para esto se usa `new URL(req.url, `http://localhost:3000`)`. A partir de este objeto se extraen dos datos fundamentales: el `pathname` y el `method` (que indica si la petición es GET o POST).
 Luego, mediante una serie de estructuras `if`, se evalúa qué ruta y qué método se solicitaron. Dependiendo del resultado, se ejecuta un bloque de código u otro. Por ejemplo, si el `pathname` es `/` es GET, se muestra el listado de noticias. Si el `pathname` es `/public/formulario.html` y el `method` es POST, se guarda una nueva noticia.
 Una característica fundamental de esta implementación es que Node.js trabaja bajo un modelo asincrónico, basado en un event loop. Esto significa que el servidor no se detiene mientras espera operaciones lentas como lectura o escritura de archivos, sino que puede seguir atendiendo otras peticiones simultáneamente.
-Las operaciones que aprovechan este modelo son principalmente: la lectura del archivo noticias.txt mediante fs.readFile(), la escritura de nuevas noticias mediante fs.appendFile() y la recpeción de datos de formularios mediante los eventos req.on('data') y req.on('end').
+Las operaciones que aprovechan este modelo son principalmente: la lectura del archivo noticias.txt mediante fs.readFile(), la escritura de nuevas noticias mediante fs.appendFile() y la recepción de datos de formularios mediante los eventos req.on('data') y req.on('end').
 
 Bloque B - Servicio de archivos estáticos con caché
 Cuando la ruta solicitada comienza con `/public`, el servidor sabe que se trata de un archivo estático (CSS, HTML). El proceso es el siguiente:
@@ -59,15 +59,15 @@ Antes de enviar el archivo, se determina su tipo MIME usando el paquete `mime` y
 Bloque C - Captura de datos POST
 Cuando el usuario envía el formulario de publicación de noticias, el navegador hace una petición POST a la ruta `/public/formulario.html`. Los datos del formulario no llegan todos juntos, sino que se envían en partes llamadas "chunks".
 Para capturarlos, se utiliza el objeto `req` (petición) y se escuchan dos eventos:
--El evento `'data'` se ejecuta cada vez que llega un fragmento de datos. En la función anonima asociada, ese grafmento se concatena a una varibale llamada `body`.
+-El evento `'data'` se ejecuta cada vez que llega un fragmento de datos. En la función anonima asociada, ese fragmento se concatena a una varibale llamada `body`.
 -El evento `'end'` se ejecuta cuando todos los fragmentos han llegado. En ese momento la variable `body` contiene todos los datos completos del formulario.
 Luego se parsean los datos usando `new URLSearchParams(body)`, que convierte el texto recibido en un objeto del cual se pueden extraer los campos individuales con `get('nombreDelCampo)`. En este caso se extraen los campos `titulo` y `texto` del formulario.
 
 Bloque D - Parámetros GET
 Para ver el detalle de una noticia específica, el sistema utiliza la ruta `noticia?id=N`, donde `N` es el número de la noticia. El número sen envía como parámetro en la URL.
 El servidor captura este número utilizando `url.searchParams.get('id')`. Este método busca en la URL el parámetro llamado `id` y devuelve su valor.
-Una vez obtenido el número, se lee el archivo `noticias.txt` y se divide en líneas usando `split('\n)`. Cad línea representa una noticia con el formato `titulo|contenido`. Como el usuario ve las noticias numeradas desd 1, pero el array de JavaScript comienza en 0, se accede a la posición `id -1` del array.
-Si en esa posición existe una noticia, se gener auna página HTML con el título y el contenido, y se responde con código 200. Si no existe (por ejemplo, si el usuario pide la noticia número 9 pero solo hay 3 noticias), se responde con código 404 y un mensaje indicando que la noticia no existe.
+Una vez obtenido el número, se lee el archivo `noticias.txt` y se divide en líneas usando `split('\n)`. Cada línea representa una noticia con el formato `titulo|contenido`. Como el usuario ve las noticias numeradas desde 1, pero el array de JavaScript comienza en 0, se accede a la posición `id -1` del array.
+Si en esa posición existe una noticia, se genera una página HTML con el título y el contenido, y se responde con código 200. Si no existe (por ejemplo, si el usuario pide la noticia número 9 pero solo hay 3 noticias), se responde con código 404 y un mensaje indicando que la noticia no existe.
 
 Bloque E - Persistencia en archivo de texto
 Todas las noticias se almacenan en un archivo ded texto llamado `noticias.txt`, ubicado dentro de la carpeta `public/`. El formato utilizado es muy simple: cada noticia ocupa una línea, con el título y el contenido separados por el carácter `|`. Para agregar una nueva noticia se utiliza `fs.appenFile('public/noticias.txt', nuevaLinea)`. Este método abre el archivo, escribe la nueva línea al final y lo cierra automáticamente. Es importante que no sobreescribe el contenido existente, sino que agrega al final.
